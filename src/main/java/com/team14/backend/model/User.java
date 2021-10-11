@@ -2,14 +2,11 @@ package com.team14.backend.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class User {
     @Id
@@ -35,13 +32,13 @@ public class User {
     private Long salary;
 
     @OneToMany(mappedBy = "user")
-    private List<Record> records
+    private List<Record> records;
 
     @OneToMany(mappedBy = "toUser")
-    private List<User> follwers
+    private List<User> follwers;
 
     @OneToMany(mappedBy = "fromUser")
-    private List<User> followings
+    private List<User> followings;
 
     @Column(unique = true)
     private Long kakaoId;
@@ -54,6 +51,7 @@ public class User {
         this.age = age;
         this.job = job;
         this.salary = salary;
+        this.kakaoId = null;
     }
 
 }
