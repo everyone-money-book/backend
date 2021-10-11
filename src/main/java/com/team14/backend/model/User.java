@@ -3,6 +3,7 @@ package com.team14.backend.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,10 +36,10 @@ public class User {
     private List<Record> records;
 
     @OneToMany(mappedBy = "toUser")
-    private List<User> followers;
+    private List<Follow> followers;
 
     @OneToMany(mappedBy = "fromUser")
-    private List<User> followings;
+    private List<Follow> followings;
 
     @Column(unique = true)
     private Long kakaoId;
