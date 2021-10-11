@@ -1,5 +1,7 @@
 package com.team14.backend.model;
 
+public class Record {
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -29,4 +31,5 @@ public class Record extends Timestamped{
 
     @Column(nullable = false)
     private LocalDateTime date;
+
 }
