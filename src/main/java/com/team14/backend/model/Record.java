@@ -1,7 +1,5 @@
 package com.team14.backend.model;
 
-public class Record {
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

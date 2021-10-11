@@ -19,16 +19,16 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String sex;
 
-    @Column(nullable = false)
+    @Column
     private Long age;
 
-    @Column(nullable = false)
+    @Column
     private String job;
 
-    @Column(nullable = false)
+    @Column
     private Long salary;
 
     @OneToMany(mappedBy = "user")
