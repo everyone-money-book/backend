@@ -35,7 +35,7 @@ public class User {
     private List<Record> records;
 
     @OneToMany(mappedBy = "toUser")
-    private List<User> follwers;
+    private List<User> followers;
 
     @OneToMany(mappedBy = "fromUser")
     private List<User> followings;
