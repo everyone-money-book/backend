@@ -1,11 +1,13 @@
 package com.team14.backend.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Follow extends Timestamped {
 
     @Id
@@ -20,4 +22,8 @@ public class Follow extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private User toUser;
 
+    public Follow(User fromUser, User toUser) {
+        this.fromUser = fromUser;
+        this.toUser = toUser;
+    }
 }
