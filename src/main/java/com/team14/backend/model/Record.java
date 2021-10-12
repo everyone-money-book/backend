@@ -1,6 +1,7 @@
 package com.team14.backend.model;
 
 import com.team14.backend.dto.RecordRequestDto;
+import com.team14.backend.security.UserDetailsImpl;
 import jdk.vm.ci.meta.Local;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,8 +35,8 @@ public class Record extends Timestamped{
     @Column(nullable = false)
     private LocalDateTime date;
 
-    public Record(RecordRequestDto requestDto) {
-        //user
+    public Record(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
+        this.user = userDetails.getUser();
         this.cost = requestDto.getCost();
         this.contents = requestDto.getContents();
         this.category = requestDto.getCategory();

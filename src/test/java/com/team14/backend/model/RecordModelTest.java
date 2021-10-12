@@ -43,7 +43,8 @@ public class RecordModelTest {
                 .display(display)
                 .build();
         //when
-        Record record = new Record(requestDto);
+        Record record = new Record();
+        record.updateRecord(requestDto);
         //then
         assertThat(record.getId()).isNull();
         assertThat(record.getCategory()).isEqualTo(category);
@@ -77,7 +78,8 @@ public class RecordModelTest {
                         .display(display)
                         .build();
                 //when
-                Record record = new Record(requestDto);
+                Record record = new Record();
+                record.updateRecord(requestDto);
                 //then
                 assertThat(record.getId()).isNull();
                 assertThat(record.getCategory()).isEqualTo(category);
