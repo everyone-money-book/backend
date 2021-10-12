@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Service
@@ -31,7 +33,7 @@ public class RecordService {
         Page<RecordDto> page;
         //마지막 7일간 소비지출 합
         Long weekSum = getWeekCost(requestDto.getCategory());
-        //마지막 30일간 소비지출 합
+        //해당 월 소비지출 합
         Long monthSum = getMonthCost(requestDto.getCategory());
         if (requestDto.getCategory().equals("all")) {
             page = recordRepository.findAll(pageRequest).map(RecordDto::new);
@@ -64,12 +66,12 @@ public class RecordService {
     private Long getMonthCost(String category) {
         Long monthSum = 0L;
         if(category.equals("all")) {
-            List<Record> monthData = recordRepository.findAllByDateBetween(LocalDate.now().minusMonths(1).atStartOfDay(), LocalDate.now().plusDays(1).atStartOfDay());
+            List<Record> monthData = recordRepository.findAllByDateBetween(LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(), LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth()).atStartOfDay());
             for (Record record : monthData) {
                 monthSum += record.getCost();
             }
         }else {
-            List<Record> monthData = recordRepository.findAllByCategoryAndDateBetween(category, LocalDate.now().minusMonths(1).atStartOfDay(), LocalDate.now().plusDays(1).atStartOfDay());
+            List<Record> monthData = recordRepository.findAllByCategoryAndDateBetween(category, LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(), LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth()).atStartOfDay());
             for (Record record : monthData) {
                 monthSum += record.getCost();
             }
