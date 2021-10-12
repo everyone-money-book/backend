@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable();
 
         http.authorizeRequests()
-                .antMatchers("/", "/api/users/**", "/images/**", "/css/**","/api/posts","/api/posts/{id}","/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll() //index.html 허용, userController 허용
+                .antMatchers("/", "/api/users/**", "/images/**", "/css/**","/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**").permitAll() //index.html 허용, userController 허용
                 .anyRequest().authenticated();
 
         http.formLogin() //로그인 관련 설정

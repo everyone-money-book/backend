@@ -3,6 +3,7 @@ package com.team14.backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.dto.UserRequestDto;
+import com.team14.backend.model.Follow;
 import com.team14.backend.model.User;
 import com.team14.backend.security.UserDetailsImpl;
 import com.team14.backend.service.KakaoUserService;
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jws.soap.SOAPBinding;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -33,7 +37,6 @@ public class UserController {
     public User home(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
         return userDetails.getUser();
     }
-
 
     //회원가입
     @PostMapping("/api/users")
@@ -94,5 +97,20 @@ public class UserController {
         ResponseDto responseDto = userService.updateUserInfo(map, userDetails);
         System.out.println(responseDto);
         return responseDto;
+    }
+
+    //팔로우 테스트
+    @GetMapping("/api/users/followcheck")
+    @ResponseBody
+    public List<User> checkFollow(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long id = userDetails.getUser().getId();
+
+        User user = userService.findUser(id);
+        List<Follow> followingList = user.getFollowings();
+        List<User> userList = new ArrayList<>();
+        for(Follow following : followingList){
+            userList.add(following.getToUser());
+        }
+        return userList;
     }
 }

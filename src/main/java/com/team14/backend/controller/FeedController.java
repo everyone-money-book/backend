@@ -2,10 +2,7 @@ package com.team14.backend.controller;
 
 import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.model.Record;
-<<<<<<< HEAD
-=======
 import com.team14.backend.model.User;
->>>>>>> 2034dd7 (api/feed : 구독한 사람 피드만 보기)
 import com.team14.backend.security.UserDetailsImpl;
 import com.team14.backend.service.FeedService;
 import lombok.RequiredArgsConstructor;

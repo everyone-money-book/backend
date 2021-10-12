@@ -41,11 +41,11 @@ public class User extends Timestamped{
     @JsonIgnore
     private List<Record> records;
 
-    @OneToMany(mappedBy = "fromUser")
+    @OneToMany(mappedBy = "toUser")
     @JsonIgnore
     private List<Follow> followers;
 
-    @OneToMany(mappedBy = "toUser")
+    @OneToMany(mappedBy = "fromUser")
     @JsonIgnore
     private List<Follow> followings;
 
