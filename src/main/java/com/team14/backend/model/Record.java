@@ -1,8 +1,8 @@
 package com.team14.backend.model;
 
+
 import com.team14.backend.dto.RecordRequestDto;
 import com.team14.backend.security.UserDetailsImpl;
-import jdk.vm.ci.meta.Local;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,6 +18,7 @@ public class Record extends Timestamped{
     @GeneratedValue
     @Column(name = "RECORD_ID")
     private Long id;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
