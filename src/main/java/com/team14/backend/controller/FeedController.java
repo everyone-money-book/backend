@@ -2,6 +2,10 @@ package com.team14.backend.controller;
 
 import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.model.Record;
+<<<<<<< HEAD
+=======
+import com.team14.backend.model.User;
+>>>>>>> 2034dd7 (api/feed : 구독한 사람 피드만 보기)
 import com.team14.backend.security.UserDetailsImpl;
 import com.team14.backend.service.FeedService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +29,7 @@ public class FeedController {
     ){
         page = page -1;
         Page<Record> feeds = feedService.getAllFeeds(page,size,sortBy,isAsc);
-        return new ResponseDto("success",null, feeds);
+        return new ResponseDto("success","", feeds);
     }
 
     @GetMapping("/api/feed/")
@@ -36,10 +40,10 @@ public class FeedController {
             @RequestParam("isAsc") boolean isAsc,
             @AuthenticationPrincipal UserDetailsImpl userDetails
             ){
-        Long userId = userDetails.getUser().getId();
+        User user = userDetails.getUser();
         page = page -1;
-        Page<Record> feeds = feedService.getFollowFeeds(userId, page, size, sortBy, isAsc);
+        Page<Record> feeds = feedService.getFollowFeeds( page, size, sortBy, isAsc, user);
 
-        return new ResponseDto("success",null,feeds);
+        return new ResponseDto("success","",feeds);
     }
 }
