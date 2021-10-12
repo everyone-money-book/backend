@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+
+import javax.jws.soap.SOAPBinding;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +44,7 @@ public class UserController {
     //회원가입
     @PostMapping("/api/users")
     @ResponseBody
-    public ResponseDto signUp(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseDto signUp(@RequestBody @Valid UserRequestDto userRequestDto) {
         ResponseDto responseDto = userService.signup(userRequestDto);
         System.out.println(responseDto);
         return responseDto;
