@@ -15,13 +15,11 @@ import static org.assertj.core.api.Assertions.*;
 
 public class RecordModelTest {
 
-    public int year = 2021;
-    public int month = 10;
-    public int date = 12;
+    public LocalDate date = LocalDate.now();
     public String contents = "치킨";
     public String category = "식비";
     public Long cost = 21000L;
-    public Long userId = 2L;
+    public String userId = "member1";
     public Long recordId = 1L;
     public int page = 0;
     public int display = 10;
@@ -31,8 +29,6 @@ public class RecordModelTest {
     void success() {
         //given
         RecordRequestDto requestDto = RecordRequestDto.builder()
-                .year(year)
-                .month(month)
                 .date(date)
                 .contents(contents)
                 .category(category)
@@ -50,8 +46,9 @@ public class RecordModelTest {
         assertThat(record.getCategory()).isEqualTo(category);
         assertThat(record.getContents()).isEqualTo(contents);
         assertThat(record.getCost()).isEqualTo(cost);
-        LocalDateTime localDateTime = LocalDate.of(year, month, date).atStartOfDay();
-        assertThat(record.getDate()).isEqualTo(localDateTime);
+        assertThat(record.getDate()).isEqualTo(date);
+        System.out.println("date = " + date);
+        System.out.println("record.getDate() = " + record.getDate());
     }
 
     @Nested
@@ -66,8 +63,6 @@ public class RecordModelTest {
                 category = null;
                 //given
                 RecordRequestDto requestDto = RecordRequestDto.builder()
-                        .year(year)
-                        .month(month)
                         .date(date)
                         .contents(contents)
                         .category(category)
@@ -85,8 +80,7 @@ public class RecordModelTest {
                 assertThat(record.getCategory()).isEqualTo(category);
                 assertThat(record.getContents()).isEqualTo(contents);
                 assertThat(record.getCost()).isEqualTo(cost);
-                LocalDateTime localDateTime = LocalDate.of(year, month, date).atStartOfDay();
-                assertThat(record.getDate()).isEqualTo(localDateTime);
+                assertThat(record.getDate()).isEqualTo(date);
             }
         }
     }

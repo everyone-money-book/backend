@@ -3,26 +3,21 @@ package com.team14.backend.dto;
 import com.team14.backend.model.Record;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 public class RecordDto {
-    private final Long recordId;
-    private final String category;
-    private final Long cost;
-    private final String contents;
-    private final int year;
-    private final int month;
-    private final int date;
+    private Long recordId;
+    private String category;
+    private Long cost;
+    private String contents;
+    private LocalDate date;
 
     public RecordDto(Record record) {
         this.recordId = record.getId();
         this.category = record.getCategory();
         this.cost = record.getCost();
         this.contents = record.getContents();
-        LocalDateTime time = record.getDate();
-        this.year = time.getYear();
-        this.month = time.getMonthValue();
-        this.date = time.getDayOfMonth();
+        this.date = LocalDate.from(record.getDate());
     }
 }

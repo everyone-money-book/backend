@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class RestApiExceptionHandler {
     @ExceptionHandler(value = {CustomErrorException.class})
-    public ResponseEntity<Object> handleApiRequestException(IllegalArgumentException ex) {
-        ResponseDto restApiException = new ResponseDto(HttpStatus.BAD_REQUEST.toString(),ex.getMessage(),"");
+    public ResponseEntity<Object> handleApiRequestException(RuntimeException ex) {
+        ResponseDto restApiException = new ResponseDto("failed",ex.getMessage(),"");
 
         return new ResponseEntity<>(
                 restApiException,

@@ -34,24 +34,20 @@ public class Record extends Timestamped{
     private String category;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     public Record(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
         this.user = userDetails.getUser();
         this.cost = requestDto.getCost();
         this.contents = requestDto.getContents();
         this.category = requestDto.getCategory();
-        this.date = LocalDate.of(requestDto.getYear(),
-                requestDto.getMonth(),
-                requestDto.getDate()).atStartOfDay();
+        this.date = requestDto.getDate();
     }
 
     public void updateRecord(RecordRequestDto requestDto) {
         this.cost = requestDto.getCost();
         this.contents = requestDto.getContents();
         this.category = requestDto.getCategory();
-        this.date = LocalDate.of(requestDto.getYear(),
-                requestDto.getMonth(),
-                requestDto.getDate()).atStartOfDay();
+        this.date = requestDto.getDate();
     }
 }
