@@ -25,7 +25,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/h2-console/**");
     }
 
-
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf()

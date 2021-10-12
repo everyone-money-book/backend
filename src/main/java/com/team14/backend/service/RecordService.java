@@ -7,7 +7,9 @@ import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Record;
 import com.team14.backend.repository.RecordRepository;
+import com.team14.backend.repository.UserRepository;
 import com.team14.backend.security.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,18 +24,25 @@ import java.util.List;
 public class RecordService {
 
     private final RecordRepository recordRepository;
+    private final UserRepository userRepository;
 
-    public RecordService(RecordRepository recordRepository) {
+    @Autowired
+    public RecordService(RecordRepository recordRepository, UserRepository userRepository) {
         this.recordRepository = recordRepository;
+        this.userRepository = userRepository;
     }
 
     public ResponseDto getAllRecords(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
-        Long userId = requestDto.getUserId();
-        if (requestDto.getUserId() == 0L) {
+        Long userId;
+        if (requestDto.getUserId().equals("")) {
             userId = userDetails.getUser().getId();
+        }else {
+            userId = userRepository.findByUsername(requestDto.getUserId()).orElseThrow(
+                    () -> new CustomErrorException("해당 유저 정보가 존재하지 않습니다.")
+            ).getId();
         }
         PageRequest pageRequest = PageRequest.of(
-                requestDto.getPage(),
+                requestDto.getPage() - 1,
                 requestDto.getDisplay(),
                 Sort.by("date").descending()
         );
@@ -44,7 +53,7 @@ public class RecordService {
         Long monthSum = getMonthCost(userId, requestDto.getCategory());
         //카테고리 별 검색
         if (requestDto.getCategory().equals("all")) {
-            page = recordRepository.findAll(pageRequest).map(RecordDto::new);
+            page = recordRepository.findAllByUserIdAndDateBefore(userId, requestDto.getDate(), pageRequest).map(RecordDto::new);
             RecordResponseDto responseDto = new RecordResponseDto(page, weekSum, monthSum);
             return new ResponseDto("success", "", responseDto);
         }
@@ -63,8 +72,8 @@ public class RecordService {
         if (category.equals("all")) {
             List<Record> weekData = recordRepository.findAllByUserIdAndDateBetween(
                     userId,
-                    LocalDate.now().minusDays(7).atStartOfDay(),
-                    LocalDate.now().plusDays(1).atStartOfDay());
+                    LocalDate.now().minusDays(7),
+                    LocalDate.now().plusDays(1));
             for (Record record : weekData) {
                 weekSum += record.getCost();
             }
@@ -72,8 +81,8 @@ public class RecordService {
             List<Record> weekData = recordRepository.findAllByUserIdAndCategoryAndDateBetween(
                     userId,
                     category,
-                    LocalDate.now().minusDays(7).atStartOfDay(),
-                    LocalDate.now().plusDays(1).atStartOfDay()
+                    LocalDate.now().minusDays(7),
+                    LocalDate.now().plusDays(1)
             );
             for (Record record : weekData) {
                 weekSum += record.getCost();
@@ -88,8 +97,8 @@ public class RecordService {
         if (category.equals("all")) {
             List<Record> monthData = recordRepository.findAllByUserIdAndDateBetween(
                     userId,
-                    LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(),
-                    LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth()).atStartOfDay()
+                    LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()),
+                    LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth())
             );
             for (Record record : monthData) {
                 monthSum += record.getCost();
@@ -98,8 +107,8 @@ public class RecordService {
             List<Record> monthData = recordRepository.findAllByUserIdAndCategoryAndDateBetween(
                     userId,
                     category,
-                    LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay(),
-                    LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth()).atStartOfDay()
+                    LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()),
+                    LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth())
             );
             for (Record record : monthData) {
                 monthSum += record.getCost();
