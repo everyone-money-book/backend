@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Follow extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
