@@ -112,4 +112,8 @@ public class UserService {
         String msg = "회원 정보수정에 성공하였습니다.";
         return new ResponseDto(result, msg, null);
     }
+
+    public User findUser(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
 }
