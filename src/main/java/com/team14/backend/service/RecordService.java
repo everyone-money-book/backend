@@ -3,7 +3,6 @@ package com.team14.backend.service;
 import com.team14.backend.dto.RecordQueryDto;
 import com.team14.backend.dto.RecordRequestDto;
 import com.team14.backend.dto.RecordResponseDto;
-import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Record;
 import com.team14.backend.model.User;
@@ -32,15 +31,18 @@ public class RecordService {
         this.userRepository = userRepository;
     }
 
+    //가계부 전체 조회
     public RecordResponseDto getAllRecords(RecordQueryDto queryDto, User user) {
         Long userId;
+        //쿼리문에 userId 조건이 없을 경우 자신의 가계부 전체 조회
         if (queryDto.getUserId().equals("")) {
             userId = user.getId();
-        }else {
+        } else {    //특정 user의 가계부 전체 조회
             userId = userRepository.findByUsername(queryDto.getUserId()).orElseThrow(
                     () -> new CustomErrorException("해당 유저 정보가 존재하지 않습니다.")
             ).getId();
         }
+        //pageable 옵션, page 는 -1 해주어야 한다. 가계부 날짜 역순으로 정렬
         PageRequest pageRequest = PageRequest.of(
                 queryDto.getPage() - 1,
                 queryDto.getDisplay(),
@@ -51,12 +53,13 @@ public class RecordService {
         Long weekSum = getWeekCost(userId, queryDto.getCategory());
         //해당 월 소비지출 합
         Long monthSum = getMonthCost(userId, queryDto.getCategory());
-        //카테고리 별 검색
+        //해당 유저의 기간 검색
         if (queryDto.getCategory().equals("all")) {
             page = recordRepository.findAllByUserIdAndDateBefore(userId, queryDto.getDate(), pageRequest).map(RecordRequestDto::new);
             return new RecordResponseDto(page, weekSum, monthSum);
 
         }
+        //해당 유저의 기간 및 카테고리 검색
         page = recordRepository.findAllByUserIdAndCategory(
                         userId,
                         queryDto.getCategory(),
@@ -66,8 +69,35 @@ public class RecordService {
         return new RecordResponseDto(page, weekSum, monthSum);
     }
 
+    //가계부 저장
+    public Record saveRecord(RecordRequestDto requestDto, User user) {
+        return recordRepository.save(new Record(requestDto, user));
+    }
+
+    //가계부 수정
+    @Transactional
+    public void editRecord(RecordRequestDto requestDto) {
+        Record record = loadRecord(requestDto.getRecordId());
+        record.updateRecord(requestDto);
+    }
+
+    //가계부 삭제
+    public void deleteRecord(Long recordId) {
+        Record record = loadRecord(recordId);
+        recordRepository.delete(record);
+    }
+
+    //가계부 조회
+    public Record loadRecord(Long recordId) {
+        return recordRepository.findById(recordId).orElseThrow(
+                () -> new CustomErrorException("게시물이 존재하지 않습니다.")
+        );
+    }
+
+    //마지막 주 총 소비
     private Long getWeekCost(Long userId, String category) {
         Long weekSum = 0L;
+        //모든 카테고리 일주일간 가계부 조회
         if (category.equals("all")) {
             List<Record> weekData = recordRepository.findAllByUserIdAndDateBetween(
                     userId,
@@ -77,6 +107,7 @@ public class RecordService {
                 weekSum += record.getCost();
             }
         } else {
+            //카테고리 별 일주일간 가계부 조회
             List<Record> weekData = recordRepository.findAllByUserIdAndCategoryAndDateBetween(
                     userId,
                     category,
@@ -87,58 +118,37 @@ public class RecordService {
                 weekSum += record.getCost();
             }
         }
-
         return weekSum;
     }
 
+    //이번 달 총 소비
     private Long getMonthCost(Long userId, String category) {
         Long monthSum = 0L;
+        //모든 카테고리 한달간 가계부 조회
         if (category.equals("all")) {
             List<Record> monthData = recordRepository.findAllByUserIdAndDateBetween(
                     userId,
                     LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()),
                     LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth())
             );
+            //지출 합
             for (Record record : monthData) {
                 monthSum += record.getCost();
             }
         } else {
+            //카테고리 별 한달간 가계부 조회
             List<Record> monthData = recordRepository.findAllByUserIdAndCategoryAndDateBetween(
                     userId,
                     category,
                     LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()),
                     LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth())
             );
+            //지출 합
             for (Record record : monthData) {
                 monthSum += record.getCost();
             }
         }
 
         return monthSum;
-    }
-
-    public Record saveRecord(RecordRequestDto requestDto, User user) {
-        return recordRepository.save(new Record(requestDto, user));
-    }
-
-    @Transactional
-    public void editRecord(RecordRequestDto requestDto) {
-        Record record = recordRepository.findById(requestDto.getRecordId()).orElseThrow(
-                () -> new CustomErrorException("해당 기록이 존재하지 않습니다.")
-        );
-        record.updateRecord(requestDto);
-    }
-
-    public void deleteRecord(Long recordId) {
-        Record record = recordRepository.findById(recordId).orElseThrow(
-                () -> new CustomErrorException("해당 기록이 존재하지 않습니다.")
-        );
-        recordRepository.delete(record);
-    }
-
-    public Record loadRecord(Long recordId) {
-        return recordRepository.findById(recordId).orElseThrow(
-                () -> new CustomErrorException("게시물이 존재하지 않습니다.")
-        );
     }
 }

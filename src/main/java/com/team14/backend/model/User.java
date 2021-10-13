@@ -1,6 +1,7 @@
 package com.team14.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class User extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
