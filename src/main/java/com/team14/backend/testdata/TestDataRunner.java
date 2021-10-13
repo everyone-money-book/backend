@@ -40,9 +40,9 @@ public class TestDataRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        User test1 = new User("member1","1234asdf","male",30L,"developer",1000000L, UserRoleEnum.USER);
-        User test2 = new User("member2","1234asdf","female",30L,"선생님",1000000L, UserRoleEnum.USER);
-        User test3 = new User("member3","1234asdf","male",30L,"developer",1000000L, UserRoleEnum.USER);
+        User test1 = new User("member1",passwordEncoder.encode("1234asdf"),"male",30L,"developer",1000000L, UserRoleEnum.USER);
+        User test2 = new User("member2",passwordEncoder.encode("1234asdf"),"female",30L,"선생님",1000000L, UserRoleEnum.USER);
+        User test3 = new User("member3",passwordEncoder.encode("1234asdf"),"male",30L,"developer",1000000L, UserRoleEnum.USER);
 
         User user1 = userRepository.save(test1);
         User user2 = userRepository.save(test2);
