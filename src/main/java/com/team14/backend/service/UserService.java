@@ -37,7 +37,7 @@ public class UserService {
 //            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
             String result = "failed";
             String msg = "중복된 회원이 존재합니다";
-            ResponseDto responseDto = new ResponseDto(result, msg, null);
+            ResponseDto responseDto = new ResponseDto(result, msg, "");
             return responseDto;
         }
 
@@ -68,11 +68,11 @@ public class UserService {
         }catch (Exception e){
             String result = "failed";
             String msg = "회원가입에 실패하였습니다";
-            return new ResponseDto(result, msg, null);
+            return new ResponseDto(result, msg, "");
         }
         String result = "success";
         String msg = "회원가입에 성공하였습니다";
-        return new ResponseDto(result, msg, null);
+        return new ResponseDto(result, msg, "");
     }
     
     //아이디 중복체크
@@ -82,11 +82,11 @@ public class UserService {
         if (user == null) {
             String result = "success";
             String msg = "사용가능한 아이디입니다.";
-            return new ResponseDto(result, msg, null);
+            return new ResponseDto(result, msg, "");
         } else {
             String result = "failed";
             String msg = "사용 불가능한 아이디입니다.";
-            return new ResponseDto(result, msg, null);
+            return new ResponseDto(result, msg, "");
         }
     }
     
@@ -106,11 +106,11 @@ public class UserService {
         } catch (Exception e) {
             String result = "failed";
             String msg = "회원 정보수정에 실패하였습니다.";
-            return new ResponseDto(result, msg, null);
+            return new ResponseDto(result, msg, "");
         }
         String result = "success";
         String msg = "회원 정보수정에 성공하였습니다.";
-        return new ResponseDto(result, msg, null);
+        return new ResponseDto(result, msg, "");
     }
 
     public User findUser(Long id) {
