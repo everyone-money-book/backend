@@ -2,6 +2,7 @@ package com.team14.backend.controller;
 
 import com.team14.backend.dto.RecordQueryDto;
 import com.team14.backend.dto.RecordRequestDto;
+import com.team14.backend.dto.RecordResponseDto;
 import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Record;
@@ -30,19 +31,16 @@ public class RecordController {
     //가계부 Get 요청
     @GetMapping("/api/records")
     public ResponseDto getRecords(@RequestBody RecordQueryDto queryDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if (userDetails == null) {
-            throw new CustomErrorException("로그인 사용자만 사용가능한 기능입니다.");
-        }
+        checkLogin(userDetails);
         User user = userService.loadLoginUser(userDetails);
-        return recordService.getAllRecords(queryDto, user);
+        RecordResponseDto responseDto = recordService.getAllRecords(queryDto, user);
+        return new ResponseDto("success", "", responseDto);
     }
 
     //가계부 작성
     @PostMapping("/api/records")
     public ResponseDto saveRecord(@RequestBody RecordRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if (userDetails == null) {
-            throw new CustomErrorException("로그인 사용자만 사용가능한 기능입니다.");
-        }
+        checkLogin(userDetails);
         User user = userService.loadLoginUser(userDetails);
         recordService.saveRecord(requestDto, user);
         return new ResponseDto("success", "성공적으로 저장하였습니다.", "");
@@ -51,32 +49,29 @@ public class RecordController {
     //가계부 수정
     @PutMapping("/api/records")
     public ResponseDto editRecord(@RequestBody RecordRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if (userDetails == null) {
-            throw new CustomErrorException("로그인 사용자만 사용가능한 기능입니다.");
-        }
-
+        checkLogin(userDetails);
         if(checkRecord(requestDto.getRecordId(), userDetails)) {
             recordService.editRecord(requestDto);
             return new ResponseDto("success", "성공적으로 수정되었습니다.", "");
         }
-        else {
-            throw new CustomErrorException("로그인 정보와 게시글의 유저 정보와 일치하지 않습니다.");
-        }
+        throw new CustomErrorException("로그인 정보와 게시글의 유저 정보와 일치하지 않습니다.");
     }
 
     //가계부 삭제
     @DeleteMapping("/api/records")
     public ResponseDto deleteRecord(@RequestBody Map<String, Long> map, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if (userDetails == null) {
-            throw new CustomErrorException("로그인 사용자만 사용가능한 기능입니다.");
-        }
+        checkLogin(userDetails);
         Long recordId = map.get("recordId");
         if(checkRecord(recordId, userDetails)) {
             recordService.deleteRecord(recordId);
             return new ResponseDto("success", "성공적으로 삭제되었습니다.", "");
         }
-        else {
-            throw new CustomErrorException("로그인 정보와 게시글의 유저 정보와 일치하지 않습니다.");
+        throw new CustomErrorException("로그인 정보와 게시글의 유저 정보와 일치하지 않습니다.");
+    }
+
+    private void checkLogin(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new CustomErrorException("로그인 사용자만 사용가능한 기능입니다.");
         }
     }
 

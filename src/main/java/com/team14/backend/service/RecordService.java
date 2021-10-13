@@ -1,6 +1,9 @@
 package com.team14.backend.service;
 
-import com.team14.backend.dto.*;
+import com.team14.backend.dto.RecordQueryDto;
+import com.team14.backend.dto.RecordRequestDto;
+import com.team14.backend.dto.RecordResponseDto;
+import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Record;
 import com.team14.backend.model.User;
@@ -29,7 +32,7 @@ public class RecordService {
         this.userRepository = userRepository;
     }
 
-    public ResponseDto getAllRecords(RecordQueryDto queryDto, User user) {
+    public RecordResponseDto getAllRecords(RecordQueryDto queryDto, User user) {
         Long userId;
         if (queryDto.getUserId().equals("")) {
             userId = user.getId();
@@ -43,25 +46,24 @@ public class RecordService {
                 queryDto.getDisplay(),
                 Sort.by("date").descending()
         );
-        Page<RecordDto> page;
+        Page<RecordRequestDto> page;
         //마지막 7일간 소비지출 합
         Long weekSum = getWeekCost(userId, queryDto.getCategory());
         //해당 월 소비지출 합
         Long monthSum = getMonthCost(userId, queryDto.getCategory());
         //카테고리 별 검색
         if (queryDto.getCategory().equals("all")) {
-            page = recordRepository.findAllByUserIdAndDateBefore(userId, queryDto.getDate(), pageRequest).map(RecordDto::new);
-            RecordResponseDto responseDto = new RecordResponseDto(page, weekSum, monthSum);
-            return new ResponseDto("success", "", responseDto);
+            page = recordRepository.findAllByUserIdAndDateBefore(userId, queryDto.getDate(), pageRequest).map(RecordRequestDto::new);
+            return new RecordResponseDto(page, weekSum, monthSum);
+
         }
         page = recordRepository.findAllByUserIdAndCategory(
                         userId,
                         queryDto.getCategory(),
                         pageRequest)
-                .map(RecordDto::new);
+                .map(RecordRequestDto::new);
 
-        RecordResponseDto responseDto = new RecordResponseDto(page, weekSum, monthSum);
-        return new ResponseDto("success", "", responseDto);
+        return new RecordResponseDto(page, weekSum, monthSum);
     }
 
     private Long getWeekCost(Long userId, String category) {
