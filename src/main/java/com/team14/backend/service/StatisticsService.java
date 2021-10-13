@@ -7,7 +7,6 @@ import com.team14.backend.model.Record;
 import com.team14.backend.model.User;
 import com.team14.backend.repository.StatisticsRepository;
 import com.team14.backend.security.UserDetailsImpl;
-import jdk.vm.ci.meta.Local;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

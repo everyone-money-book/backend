@@ -37,9 +37,9 @@ public class FeedController {
             @RequestParam("isAsc") boolean isAsc,
             @AuthenticationPrincipal UserDetailsImpl userDetails
             ){
-        User user = userDetails.getUser();
+        Long userId = userDetails.getUser().getId();
         page = page -1;
-        Page<Record> feeds = feedService.getFollowFeeds( page, size, sortBy, isAsc, user);
+        Page<Record> feeds = feedService.getFollowFeeds( page, size, sortBy, isAsc, userId);
 
         return new ResponseDto("success","",feeds);
     }
