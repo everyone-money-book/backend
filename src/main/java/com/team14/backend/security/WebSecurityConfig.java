@@ -35,14 +35,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
 
         http.formLogin() //로그인 관련 설정
-//                .loginPage("/user/login") //로그인 view 페이지 따로 설정 GET /user/login
+//                .loginPage("/user/login/necessary") //로그인 view 페이지 따로 설정 GET /user/login
                 .loginProcessingUrl("/user/login") //로그인처리 Post/user/login
                 //로그인성공하면 "/"로 이동
-                .failureUrl("/user/login?error") //로그인실패시 view
+                .defaultSuccessUrl("/user/login/success")
+                .failureUrl("/user/login/fail") //로그인실패시 view
                 .permitAll()
                 .and()
                 .logout()
                 .logoutUrl("/user/logout")
+                .logoutSuccessUrl("/user/logout/success")
                 .permitAll();
     }
 
