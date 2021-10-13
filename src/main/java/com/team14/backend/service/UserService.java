@@ -2,6 +2,7 @@ package com.team14.backend.service;
 
 import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.dto.UserRequestDto;
+import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.User;
 import com.team14.backend.model.UserRoleEnum;
 import com.team14.backend.repository.UserRepository;
@@ -115,5 +116,11 @@ public class UserService {
 
     public User findUser(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public User loadLoginUser(UserDetailsImpl userDetails) {
+        return userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
+                () -> new CustomErrorException("로그인된 유저의 정보를 찾을 수 없습니다.")
+        );
     }
 }

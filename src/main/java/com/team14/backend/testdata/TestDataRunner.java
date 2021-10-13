@@ -1,8 +1,6 @@
 package com.team14.backend.testdata;
 
 import com.team14.backend.dto.RecordRequestDto;
-import com.team14.backend.dto.RecordResponseDto;
-import com.team14.backend.dto.UserRequestDto;
 import com.team14.backend.model.User;
 import com.team14.backend.model.UserRoleEnum;
 import com.team14.backend.repository.UserRepository;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class TestDataRunner implements ApplicationRunner {
@@ -61,25 +58,21 @@ public class TestDataRunner implements ApplicationRunner {
     }
 
     private void 구독하기(User user1, User user2) {
-        HashMap map = new HashMap<String,String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("username",user2.getUsername());
         followService.follow(map,new UserDetailsImpl(user1));
     }
 
     private void 테스트게시물올리기(User user1, String date, String category, String contents, Long price) {
-        String user1Id = user1.getId()+"";
-        UserDetailsImpl userDetails = new UserDetailsImpl(user1);
+        Long user1Id = user1.getId();
         RecordRequestDto requestDto1 = new RecordRequestDto(
                 LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                 contents,
                 category,
                 price,
-                user1Id,
-                null,
-                0,
-                0
+                user1Id
         );
-        recordService.saveRecord(requestDto1,userDetails);
+        recordService.saveRecord(requestDto1, user1);
     }
 
 
