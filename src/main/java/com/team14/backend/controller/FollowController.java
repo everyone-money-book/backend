@@ -1,6 +1,7 @@
 package com.team14.backend.controller;
 
 import com.team14.backend.dto.ResponseDto;
+import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Follow;
 import com.team14.backend.model.User;
 import com.team14.backend.security.UserDetailsImpl;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 
-@Controller
+@RestController
 public class FollowController {
 
     private final FollowService followService;
@@ -25,15 +26,22 @@ public class FollowController {
 
     //팔로우하기
     @PostMapping("/api/follow")
-    @ResponseBody
     public ResponseDto follow(@RequestBody HashMap<String, String> map, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
         return followService.follow(map, userDetails);
     }
 
-    //팔로우 취소
+    //팔로우 취소하기
     @DeleteMapping("/api/follow")
-    @ResponseBody
     public ResponseDto unfollow(@RequestBody HashMap<String, String> map, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
         return followService.unfollow(map, userDetails);
+    }
+
+    //로그인 여부 확인 공통메서드
+    private void checkLogin(UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            throw new CustomErrorException("로그인 사용자만 사용가능한 기능입니다.");
+        }
     }
 }

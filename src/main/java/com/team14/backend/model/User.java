@@ -34,7 +34,7 @@ public class User extends Timestamped{
     private Long salary;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING) //저장될때는 string으로 저장되도록
+    @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
     @OneToMany(mappedBy = "user")
@@ -63,14 +63,16 @@ public class User extends Timestamped{
         this.role = role;
         this.kakaoId = null;
     }
-
+    
+    //카카오회원 회원가입
     public User(String username, String encodedPassword, UserRoleEnum role, Long kakaoId) {
         this.username = username;
         this.password = encodedPassword;
         this.role = role;
         this.kakaoId = kakaoId;
     }
-
+    
+    //회원정보 업데이트 메서드
     public void update(String sex, Long age, String job, Long salary) {
         this.sex = sex;
         this.age = age;

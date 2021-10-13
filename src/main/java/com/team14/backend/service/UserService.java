@@ -2,6 +2,7 @@ package com.team14.backend.service;
 
 import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.dto.UserRequestDto;
+import com.team14.backend.dto.UserUpdateReqeustDto;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.User;
 import com.team14.backend.model.UserRoleEnum;
@@ -11,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -35,11 +34,7 @@ public class UserService {
         // 회원 ID 중복 확인
         Optional<User> found = userRepository.findByUsername(nickname);
         if (found.isPresent()) {
-//            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
-            String result = "failed";
-            String msg = "중복된 회원이 존재합니다";
-            ResponseDto responseDto = new ResponseDto(result, msg, "");
-            return responseDto;
+            throw new CustomErrorException("중복된 유저네임이 존재합니다.");
         }
 
         //패스워드 암호화
@@ -47,11 +42,11 @@ public class UserService {
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
+
         //true면 == 관리자이면
-        //boolean 타입의 getter는 is를 붙인다
         if (userRequestDto.isAdmin()) {
             if (!userRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+                throw new CustomErrorException("관리자 암호가 틀려 등록이 불가능합니다.");
             }
             //role을 admin으로 바꿔준다
             role = UserRoleEnum.ADMIN;
@@ -67,55 +62,49 @@ public class UserService {
         try {
             userRepository.save(user);
         }catch (Exception e){
-            String result = "failed";
-            String msg = "회원가입에 실패하였습니다";
-            return new ResponseDto(result, msg, "");
+            throw new CustomErrorException("회원가입에 실패하였습니다.");
         }
-        String result = "success";
-        String msg = "회원가입에 성공하였습니다";
-        return new ResponseDto(result, msg, "");
+        return new ResponseDto("success", "회원가입에 성공하였습니다", "");
     }
     
-    //아이디 중복체크
+    //유저네임 중복체크
     public ResponseDto checkUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElse(null);
         if (user == null) {
-            String result = "success";
-            String msg = "사용가능한 아이디입니다.";
-            return new ResponseDto(result, msg, "");
+            return new ResponseDto("success", "사용가능한 유저네임입니다.", "");
         } else {
-            String result = "failed";
-            String msg = "사용 불가능한 아이디입니다.";
-            return new ResponseDto(result, msg, "");
+            throw new CustomErrorException("중복된 유저네임이 존재합니다.");
         }
     }
     
-    //회원정보 없데이트
+    //회원정보 업데이트
     @Transactional
-    public ResponseDto updateUserInfo(HashMap<String, Object> map, UserDetailsImpl userDetails) {
-        String sex = (String) map.get("sex");
-        Long age = ((Number) map.get("age")).longValue();
-        String job = (String) map.get("job");
-        Long salary = ((Number) map.get("salary")).longValue();
+    public ResponseDto updateUserInfo(UserUpdateReqeustDto userUpdateReqeustDto, UserDetailsImpl userDetails) {
+        String sex = userUpdateReqeustDto.getSex();
+        Long age = userUpdateReqeustDto.getAge();
+        String job = userUpdateReqeustDto.getJob();
+        Long salary = userUpdateReqeustDto.getSalary();
+
         Long userId = userDetails.getUser().getId();
+
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new NullPointerException("찾을 수없는 유저")
+                () -> new CustomErrorException("존재하지 않는 회원입니다.")
         );
+
         try {
             user.update(sex, age, job, salary);
         } catch (Exception e) {
-            String result = "failed";
-            String msg = "회원 정보수정에 실패하였습니다.";
-            return new ResponseDto(result, msg, "");
+            throw new CustomErrorException("회원정보업데이트에 실패했습니다");
         }
-        String result = "success";
-        String msg = "회원 정보수정에 성공하였습니다.";
-        return new ResponseDto(result, msg, "");
+
+        return new ResponseDto("success", "회원 정보수정에 성공하였습니다.", "");
     }
 
     public User findUser(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(id).orElseThrow(
+                () -> new CustomErrorException("회원정보를 가져오지 못했습니다.")
+        );
     }
 
     public User loadLoginUser(UserDetailsImpl userDetails) {
