@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -25,13 +26,13 @@ public class UserRequestDto {
     @NotBlank(message = "성별은 필수값입니다.")
     private String sex;
     
-    @NotBlank(message = "나이는 필수값입니다.")
+    @NotNull(message = "나이는 필수값입니다.")
     private Long age;
     
     @NotBlank(message = "직업은 필수값입니다.")
     private String job;
     
-    @NotBlank(message = "월급은 필수값입니다.")
+    @NotNull(message = "월급은 필수값입니다.")
     private Long salary;
     
     private boolean admin = false;

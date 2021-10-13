@@ -8,21 +8,22 @@ import com.team14.backend.model.User;
 import com.team14.backend.security.UserDetailsImpl;
 import com.team14.backend.service.KakaoUserService;
 import com.team14.backend.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-
-
-import javax.jws.soap.SOAPBinding;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 @Controller
+@Api(value = "UserController", description = "유저 관련 API")
 public class UserController {
 
     private final UserService userService;
@@ -34,20 +35,20 @@ public class UserController {
         this.kakaoUserService = kakaoUserService;
     }
 
-    //로그인정보 확인용 테스트
-    @GetMapping("/")
-    @ResponseBody
-    public User home(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model) {
-        return userDetails.getUser();
-    }
-
     //회원가입
     @PostMapping("/api/users")
     @ResponseBody
+    @ApiOperation(value = "회원가입 API", notes = "회원가입form에서 정보를 받아 DB에 저장합니다")
     public ResponseDto signUp(@RequestBody @Valid UserRequestDto userRequestDto) {
-        ResponseDto responseDto = userService.signup(userRequestDto);
-        System.out.println(responseDto);
-        return responseDto;
+        //valid 에러 메세지 출력 확인
+//        if(bindingResult.hasErrors()){
+//            System.out.println(bindingResult);
+//            List<ObjectError> errorList = bindingResult.getAllErrors();
+//            for (ObjectError error : errorList) {
+//                System.out.println(error.getDefaultMessage());
+//            }
+//        }
+        return userService.signup(userRequestDto);
     }
     
     //유저네임 중복 검사
@@ -78,13 +79,14 @@ public class UserController {
     @GetMapping("/api/users")
     @ResponseBody
     public ResponseDto getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Long userId = userDetails.getUser().getId();
         User user;
         try {
-            user = userDetails.getUser();
+            user = userService.findUser(userId);
         } catch (Exception e) {
             String result = "failed";
             String msg = "회원정보를 가져오지 못했습니다.";
-            return new ResponseDto(result, msg, null);
+            return new ResponseDto(result, msg, "");
         }
         String result = "success";
         String msg = "회원정보를 가져왔습니다";
@@ -107,7 +109,6 @@ public class UserController {
     @ResponseBody
     public List<User> checkFollow(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Long id = userDetails.getUser().getId();
-
         User user = userService.findUser(id);
         List<Follow> followingList = user.getFollowings();
         List<User> userList = new ArrayList<>();
