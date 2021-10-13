@@ -16,8 +16,5 @@ public class RecordRequestDto {
     private String contents;
     private String category;
     private Long cost;
-    private String userId;
     private Long recordId;
-    private int page;
-    private int display;
 }

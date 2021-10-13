@@ -2,13 +2,11 @@ package com.team14.backend.model;
 
 
 import com.team14.backend.dto.RecordRequestDto;
-import com.team14.backend.security.UserDetailsImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,7 +16,6 @@ public class Record extends Timestamped{
     @GeneratedValue
     @Column(name = "RECORD_ID")
     private Long id;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
@@ -36,8 +33,8 @@ public class Record extends Timestamped{
     @Column(nullable = false)
     private LocalDate date;
 
-    public Record(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
-        this.user = userDetails.getUser();
+    public Record(RecordRequestDto requestDto, User user) {
+        this.user = user;
         this.cost = requestDto.getCost();
         this.contents = requestDto.getContents();
         this.category = requestDto.getCategory();

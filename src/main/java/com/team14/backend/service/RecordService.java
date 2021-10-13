@@ -1,14 +1,11 @@
 package com.team14.backend.service;
 
-import com.team14.backend.dto.RecordDto;
-import com.team14.backend.dto.RecordRequestDto;
-import com.team14.backend.dto.RecordResponseDto;
-import com.team14.backend.dto.ResponseDto;
+import com.team14.backend.dto.*;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Record;
+import com.team14.backend.model.User;
 import com.team14.backend.repository.RecordRepository;
 import com.team14.backend.repository.UserRepository;
-import com.team14.backend.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,34 +29,34 @@ public class RecordService {
         this.userRepository = userRepository;
     }
 
-    public ResponseDto getAllRecords(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
+    public ResponseDto getAllRecords(RecordQueryDto queryDto, User user) {
         Long userId;
-        if (requestDto.getUserId().equals("")) {
-            userId = userDetails.getUser().getId();
+        if (queryDto.getUserId().equals("")) {
+            userId = user.getId();
         }else {
-            userId = userRepository.findByUsername(requestDto.getUserId()).orElseThrow(
+            userId = userRepository.findByUsername(queryDto.getUserId()).orElseThrow(
                     () -> new CustomErrorException("해당 유저 정보가 존재하지 않습니다.")
             ).getId();
         }
         PageRequest pageRequest = PageRequest.of(
-                requestDto.getPage() - 1,
-                requestDto.getDisplay(),
+                queryDto.getPage() - 1,
+                queryDto.getDisplay(),
                 Sort.by("date").descending()
         );
         Page<RecordDto> page;
         //마지막 7일간 소비지출 합
-        Long weekSum = getWeekCost(userId, requestDto.getCategory());
+        Long weekSum = getWeekCost(userId, queryDto.getCategory());
         //해당 월 소비지출 합
-        Long monthSum = getMonthCost(userId, requestDto.getCategory());
+        Long monthSum = getMonthCost(userId, queryDto.getCategory());
         //카테고리 별 검색
-        if (requestDto.getCategory().equals("all")) {
-            page = recordRepository.findAllByUserIdAndDateBefore(userId, requestDto.getDate(), pageRequest).map(RecordDto::new);
+        if (queryDto.getCategory().equals("all")) {
+            page = recordRepository.findAllByUserIdAndDateBefore(userId, queryDto.getDate(), pageRequest).map(RecordDto::new);
             RecordResponseDto responseDto = new RecordResponseDto(page, weekSum, monthSum);
             return new ResponseDto("success", "", responseDto);
         }
         page = recordRepository.findAllByUserIdAndCategory(
                         userId,
-                        requestDto.getCategory(),
+                        queryDto.getCategory(),
                         pageRequest)
                 .map(RecordDto::new);
 
@@ -118,35 +115,28 @@ public class RecordService {
         return monthSum;
     }
 
-    public ResponseDto saveRecord(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
-        recordRepository.save(new Record(requestDto, userDetails));
-        return new ResponseDto("success", "성공적으로 저장하였습니다.", "");
+    public Record saveRecord(RecordRequestDto requestDto, User user) {
+        return recordRepository.save(new Record(requestDto, user));
     }
 
     @Transactional
-    public ResponseDto editRecord(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
+    public void editRecord(RecordRequestDto requestDto) {
         Record record = recordRepository.findById(requestDto.getRecordId()).orElseThrow(
                 () -> new CustomErrorException("해당 기록이 존재하지 않습니다.")
         );
-
-        if (!record.getUser().getId().equals(userDetails.getUser().getId())) {
-            throw new CustomErrorException("로그인 정보와 게시글의 유저 정보와 일치하지 않습니다.");
-        }
-
         record.updateRecord(requestDto);
-        return new ResponseDto("success", "성공적으로 수정되었습니다.", "");
     }
 
-    public ResponseDto deleteRecord(RecordRequestDto requestDto, UserDetailsImpl userDetails) {
-        Record record = recordRepository.findById(requestDto.getRecordId()).orElseThrow(
+    public void deleteRecord(Long recordId) {
+        Record record = recordRepository.findById(recordId).orElseThrow(
                 () -> new CustomErrorException("해당 기록이 존재하지 않습니다.")
         );
-
-        if (!record.getUser().getId().equals(userDetails.getUser().getId())) {
-            throw new CustomErrorException("로그인 정보와 게시글의 유저 정보와 일치하지 않습니다.");
-        }
-
         recordRepository.delete(record);
-        return new ResponseDto("success", "성공적으로 삭제되었습니다.", "");
+    }
+
+    public Record loadRecord(Long recordId) {
+        return recordRepository.findById(recordId).orElseThrow(
+                () -> new CustomErrorException("게시물이 존재하지 않습니다.")
+        );
     }
 }
