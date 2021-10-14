@@ -125,7 +125,7 @@ public class UserController {
     }
 
     //나의 팔로워출력 테스트
-    @GetMapping("/api/users/followcheck")
+    @GetMapping("/api/users/followercheck")
     @ResponseBody
     public List<User> checkFollower(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkLogin(userDetails);
