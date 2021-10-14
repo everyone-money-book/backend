@@ -18,7 +18,7 @@ public class LoginSuccessProcess implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         ObjectMapper om = new ObjectMapper();
 
-        //실패 메시지
+        //성공 메시지
         ResponseDto responseDto = new ResponseDto("success", "성공적으로 로그인이 되었습니다.", "");
 
         //JSON 형식으로 변환
