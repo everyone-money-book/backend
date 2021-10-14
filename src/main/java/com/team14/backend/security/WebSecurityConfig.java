@@ -24,19 +24,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //로그인 성공 핸들러 빈 등록
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler(){
-        return new LoginSuccessProcess();
+        return new LoginSuccessHandlerImpl();
     }
 
     //로그인 실패 핸들러 빈 등록
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler(){
-        return new LoginFailProcess();
+        return new LoginFailHandlerImpl();
     }
 
     //로그아웃 성공 핸들러 빈 등록
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler(){
-        return new LogoutSuccessProcess();
+        return new LogoutSuccessHandlerImpl();
     }
 
     @Override
