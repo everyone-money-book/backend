@@ -50,13 +50,6 @@ public class UserController {
         System.out.println(username);
         return userService.checkUsername(username);
     }
-    
-    //로그인 성공시 responseDto전달
-    @GetMapping("/user/login/success")
-    @ResponseBody
-    public ResponseDto loginSuccess(){
-        return new ResponseDto("success", "성공적으로 로그인이 되었습니다.", "");
-    }
 
     //로그아웃 성공시 responseDto전달
     @GetMapping("/user/logout/success")
