@@ -1,6 +1,7 @@
 package com.team14.backend.service;
 
 import com.team14.backend.dto.ResponseDto;
+import com.team14.backend.dto.SafeFeedResponseDto;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Follow;
 import com.team14.backend.model.Record;
@@ -25,12 +26,14 @@ public class FeedService {
     private final UserRepository userRepository;
 
     //피드들 Page로 가져오기: 모든 피드
-    public Page<Record> getAllFeeds(int page, int size, String sortBy, boolean isAsc){
+    public Page<SafeFeedResponseDto> getAllFeeds(int page, int size, String sortBy, boolean isAsc){
         Sort.Direction direction = isAsc ? Sort.Direction.ASC: Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size,sort);
         Page<Record> records = feedRepository.findAll(pageable);
-        return records;
+        Page<SafeFeedResponseDto> safeFeedResponseDtoPage = Page.empty();
+        safeFeedResponseDtoPage = records.map((SafeFeedResponseDto::new));
+        return safeFeedResponseDtoPage;
     }
 
     //피드들 Page로 가져오기:follow한 피드만
