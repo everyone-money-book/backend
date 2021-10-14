@@ -62,7 +62,7 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "ce61f1a202b8b5e60a7a2c1825c0cd6c");
-        body.add("redirect_uri", "http://http://13.125.42.121:8080/api/users/kakao/callback");
+        body.add("redirect_uri", "http://13.125.42.121:8080/api/users/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -134,7 +134,6 @@ public class KakaoUserService {
 
             kakaoUser = new User(username, encodedPassword, role, kakaoId);
             userRepository.save(kakaoUser);
-
         }
         return kakaoUser;
     }
