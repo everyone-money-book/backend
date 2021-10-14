@@ -40,7 +40,7 @@ public class FeedController {
             ){
         Long userId = userDetails.getUser().getId();
         page = page -1;
-        Page<Record> feeds = feedService.getFollowFeeds( page, size, sortBy, isAsc, userId);
+        Page<SafeFeedResponseDto> feeds = feedService.getFollowFeeds( page, size, sortBy, isAsc, userId);
 
         return new ResponseDto("success","",feeds);
     }
