@@ -3,6 +3,7 @@ package com.team14.backend.service;
 import com.team14.backend.dto.ResponseDto;
 import com.team14.backend.dto.StatisticsRequestDto;
 import com.team14.backend.dto.StatisticsResponseDto;
+import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Record;
 import com.team14.backend.model.User;
 import com.team14.backend.repository.StatisticsRepository;
@@ -29,14 +30,15 @@ public class StatisticsService {
         //해당 유저의 모든 레코드 다 가져오기
         LocalDate startDate = LocalDate.parse(requestDto.getStartDate());//"2019-01-10" ->2019-01-10
         LocalDate endDate = LocalDate.parse(requestDto.getEndDate());
-        List<Record> recordList = statisticsRepository.findAllByUserAndDateBetween(
+
+        List<Record> recordList = statisticsRepository.findAllByUserAndDateBetween( //아무 기록이 없으면 빈배열 [] 리턴됨
                 user,
                 startDate,
                 endDate
         );
-        Map<String,Long> categoryCost = new HashMap<>();
 
         //카테고리별 합계구하기, 전체합계에 더하기
+        Map<String,Long> categoryCost = new HashMap<>();
         Long sumCost = 0L;
         for (Record record:recordList){
             String category = record.getCategory();

@@ -1,6 +1,7 @@
 package com.team14.backend.controller;
 
 import com.team14.backend.dto.ResponseDto;
+import com.team14.backend.dto.SafeFeedResponseDto;
 import com.team14.backend.model.Record;
 import com.team14.backend.model.User;
 import com.team14.backend.security.UserDetailsImpl;
@@ -25,7 +26,7 @@ public class FeedController {
             @RequestParam("isAsc") boolean isAsc
     ){
         page = page -1;
-        Page<Record> feeds = feedService.getAllFeeds(page,size,sortBy,isAsc);
+        Page<SafeFeedResponseDto> feeds = feedService.getAllFeeds(page,size,sortBy,isAsc);
         return new ResponseDto("success","", feeds);
     }
 
@@ -39,7 +40,7 @@ public class FeedController {
             ){
         Long userId = userDetails.getUser().getId();
         page = page -1;
-        Page<Record> feeds = feedService.getFollowFeeds( page, size, sortBy, isAsc, userId);
+        Page<SafeFeedResponseDto> feeds = feedService.getFollowFeeds( page, size, sortBy, isAsc, userId);
 
         return new ResponseDto("success","",feeds);
     }
