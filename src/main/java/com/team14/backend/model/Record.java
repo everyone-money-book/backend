@@ -2,6 +2,7 @@ package com.team14.backend.model;
 
 
 import com.team14.backend.dto.RecordRequestDto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Record extends Timestamped{
     @Id
     @GeneratedValue

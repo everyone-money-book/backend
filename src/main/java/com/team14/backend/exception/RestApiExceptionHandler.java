@@ -14,7 +14,7 @@ public class RestApiExceptionHandler {
 
         return new ResponseEntity<>(
                 restApiException,
-                HttpStatus.BAD_REQUEST
+                HttpStatus.OK
         );
     }
 }
