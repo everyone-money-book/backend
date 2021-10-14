@@ -17,6 +17,6 @@ public class UserDtoValidExceptionHandler {
         String msg = ex.getBindingResult().getFieldError().getDefaultMessage();
         ResponseDto restApiException = new ResponseDto("failed", msg,"");
 
-        return new ResponseEntity<>(restApiException, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(restApiException, HttpStatus.OK);
     }
 }
