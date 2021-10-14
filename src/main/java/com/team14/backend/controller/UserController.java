@@ -57,14 +57,7 @@ public class UserController {
     public ResponseDto loginSuccess(){
         return new ResponseDto("success", "성공적으로 로그인이 되었습니다.", "");
     }
-    
-    //로그인 실패시 responseDto전달
-    @GetMapping("/user/login/fail")
-    @ResponseBody
-    public ResponseDto loginFail(){
-        return new ResponseDto("failed", "로그인에 실패하였습니다.", "");
-    }
-    
+
     //로그아웃 성공시 responseDto전달
     @GetMapping("/user/logout/success")
     @ResponseBody
