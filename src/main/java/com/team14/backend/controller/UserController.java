@@ -77,6 +77,7 @@ public class UserController {
 //        return "login";
 //    }
 
+//    https://kauth.kakao.com/oauth/authorize?client_id=ce61f1a202b8b5e60a7a2c1825c0cd6c&redirect_uri=http://13.125.42.121:8080/api/users/kakao/callback&response_type=code
     //카카오 로그인 인가 처리 URI
     @GetMapping("/api/users/kakao/callback")
     @ResponseBody
@@ -119,6 +120,21 @@ public class UserController {
         List<User> userList = new ArrayList<>();
         for(Follow following : followingList){
             userList.add(following.getToUser());
+        }
+        return userList;
+    }
+
+    //나의 팔로워출력 테스트
+    @GetMapping("/api/users/followercheck")
+    @ResponseBody
+    public List<User> checkFollower(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        checkLogin(userDetails);
+        Long id = userDetails.getUser().getId();
+        User user = userService.findUser(id);
+        List<Follow> followerList = user.getFollowers();
+        List<User> userList = new ArrayList<>();
+        for(Follow follower : followerList){
+            userList.add(follower.getFromUser());
         }
         return userList;
     }
