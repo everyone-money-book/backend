@@ -1,9 +1,6 @@
 package com.team14.backend.controller;
 
-import com.team14.backend.dto.ResponseDto;
-import com.team14.backend.dto.UserRequestDto;
-import com.team14.backend.dto.UserUpdateReqeustDto;
-import com.team14.backend.dto.UsernameCheckRequestDto;
+import com.team14.backend.dto.*;
 import com.team14.backend.exception.CustomErrorException;
 import com.team14.backend.model.Follow;
 import com.team14.backend.model.User;
@@ -60,12 +57,11 @@ public class UserController {
     // 로그인
     @PostMapping("/api/users/login")
     @ResponseBody
-    public ResponseDto login(@RequestParam String username, @RequestParam String password, HttpServletResponse response){
+    public LoginResponseDto login(@RequestParam String username, @RequestParam String password, HttpServletResponse response){
         System.out.println(username);
         System.out.println(password);
         User user = userService.login(username, password);
         String checkUsername = user.getUsername();
-        UserRoleEnum roleEnum = user.getRole();
 
         String token = jwtTokenProvider.createToken(checkUsername);
         response.setHeader("X-AUTH-TOKEN", token);
@@ -78,7 +74,7 @@ public class UserController {
         response.addCookie(cookie);
 
         //body에도 보내주기 혹시모르니까
-        return new ResponseDto("success","로그인 성공했습니다",token);
+        return new LoginResponseDto("success","로그인 성공했습니다",token, user);
     }
     
     //로그아웃
