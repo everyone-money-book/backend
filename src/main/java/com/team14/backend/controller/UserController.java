@@ -102,18 +102,28 @@ public class UserController {
 //    }
 
 
-//    https://kauth.kakao.com/oauth/authorize?client_id=ce61f1a202b8b5e60a7a2c1825c0cd6c&redirect_uri=http://13.125.42.121:8080/api/users/kakao/callback&response_type=code
+//    https://kauth.kakao.com/oauth/authorize?client_id=ce61f1a202b8b5e60a7a2c1825c0cd6c&redirect_uri=http://13.124.241.254/api/users/kakao/callback&response_type=code
     //카카오 로그인 인가 처리 URI
     @GetMapping("/api/users/kakao/callback")
     @ResponseBody
-    public ResponseDto kakaologin(@RequestParam String code) {
+    public ResponseDto kakaologin(@RequestParam String code, HttpServletResponse response) {
         //authorizeCode : 카카오 서버로 부터 받은 인가 코드
+        String token = "";
         try {
-            kakaoUserService.kakaologin(code);
+            token =  kakaoUserService.kakaologin(code);
         } catch (Exception ex) {
             throw new CustomErrorException("카카오 로그인 실패하였습니다");
         }
-        return new ResponseDto("success", "카카오로그인 성공하였습니다.", "");
+
+        response.setHeader("X-AUTH-TOKEN", token);
+
+        //header에 cookie 저장도 해주고
+        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+        return new ResponseDto("success", "카카오로그인 성공하였습니다.", token);
     }
 
     //회원정보가져오기

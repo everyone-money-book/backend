@@ -9,6 +9,7 @@ import com.team14.backend.model.User;
 import com.team14.backend.model.UserRoleEnum;
 import com.team14.backend.repository.UserRepository;
 import com.team14.backend.security.UserDetailsImpl;
+import com.team14.backend.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,14 +33,16 @@ public class KakaoUserService {
     private final UserRepository userRepository;
     //BCrypt 해시함수가 passwordEncoder를 구현한거여서
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public KakaoUserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public KakaoUserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public void kakaologin(String code) throws JsonProcessingException { //throws 이걸 호출한 애한테 예외처리 넘김
+    public String  kakaologin(String code) throws JsonProcessingException { //throws 이걸 호출한 애한테 예외처리 넘김
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -51,6 +54,11 @@ public class KakaoUserService {
 
         // 4. 카카오 유저 강제 로그인 처리
         forcedLoginUser(kakaoUser);
+        
+        //5. JWT 토큰 생성
+        String kakaoNickname = kakaoUserInfo.getNickname();
+        return jwtTokenProvider.createToken(kakaoNickname);
+
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -62,7 +70,7 @@ public class KakaoUserService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "ce61f1a202b8b5e60a7a2c1825c0cd6c");
-        body.add("redirect_uri", "http://13.125.42.121:8080/api/users/kakao/callback");
+        body.add("redirect_uri", "http://13.124.241.254/api/users/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -101,7 +109,6 @@ public class KakaoUserService {
                 String.class
         );
         String responseBody = response.getBody();
-        responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
@@ -113,7 +120,7 @@ public class KakaoUserService {
     }
 
     @Transactional
-    private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+    User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
         // 서버에서 카카오아이디를 가져와서
         // DB에 중복된 Kakao Id 가 있는지 확인
         Long kakaoId = kakaoUserInfo.getId();
