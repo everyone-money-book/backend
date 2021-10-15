@@ -9,8 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface RecordRepository extends JpaRepository<Record, Long> {
-    Page<Record> findAllByUserIdAndDateBefore(Long userId, LocalDate start, Pageable pageable);
-    Page<Record> findAllByUserIdAndCategory(Long userId, String category, Pageable pageable);
     List<Record> findAllByUserIdAndDateBetween(Long userId, LocalDate start, LocalDate end);
     List<Record> findAllByUserIdAndCategoryAndDateBetween(Long userId, String category, LocalDate start, LocalDate end);
+    List<Record> findAllByUserIdAndDateBetweenOrderByDateDesc(Long userId, LocalDate start, LocalDate end);
+    List<Record> findAllByUserIdAndCategoryAndDateBetweenOrderByDateDesc(Long userId, String category, LocalDate start, LocalDate end);
 }
