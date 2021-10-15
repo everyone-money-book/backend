@@ -58,7 +58,7 @@ public class RecordService {
         Long monthSum = getMonthCost(userId, queryDto.getCategory());
         //해당 유저의 기간 검색
         if (queryDto.getCategory().equals("all")) {
-            list = recordRepository.findAllByUserIdAndDateBetween(
+            list = recordRepository.findAllByUserIdAndDateBetweenOrderByDateDesc(
                             userId,
                             queryDto.getDate().with(TemporalAdjusters.firstDayOfMonth()),
                             queryDto.getDate().with(TemporalAdjusters.firstDayOfNextMonth()))
@@ -67,7 +67,7 @@ public class RecordService {
 
         }
         //해당 유저의 기간 및 카테고리 검색
-        list = recordRepository.findAllByUserIdAndCategoryAndDateBetween(
+        list = recordRepository.findAllByUserIdAndCategoryAndDateBetweenOrderByDateDesc(
                         userId,
                         queryDto.getCategory(),
                         queryDto.getDate().with(TemporalAdjusters.firstDayOfMonth()),
