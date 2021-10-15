@@ -31,13 +31,13 @@ public class RecordService {
     }
 
     //가계부 전체 조회
-    public RecordResponseDto getAllRecords(RecordQueryDto queryDto, User user) {
+    public RecordResponseDto getAllRecords(String username, LocalDate date, String category, User user) {
         Long userId;
         //쿼리문에 userId 조건이 없을 경우 자신의 가계부 전체 조회
-        if (queryDto.getUsername().equals("")) {
+        if (username.equals("")) {
             userId = user.getId();
         } else {    //특정 user의 가계부 전체 조회
-            userId = userRepository.findByUsername(queryDto.getUsername()).orElseThrow(
+            userId = userRepository.findByUsername(username).orElseThrow(
                     () -> new CustomErrorException("해당 유저 정보가 존재하지 않습니다.")
             ).getId();
         }
@@ -50,15 +50,15 @@ public class RecordService {
 //        Page<RecordRequestDto> page;
         List<RecordRequestDto> list;
         //마지막 7일간 소비지출 합
-        Long weekSum = getWeekCost(userId, queryDto.getCategory());
+        Long weekSum = getWeekCost(userId, category);
         //해당 월 소비지출 합
-        Long monthSum = getMonthCost(userId, queryDto.getCategory());
+        Long monthSum = getMonthCost(userId, category);
         //해당 유저의 기간 검색
-        if (queryDto.getCategory().equals("all")) {
+        if (category.equals("all")) {
             list = recordRepository.findAllByUserIdAndDateBetweenOrderByDateDesc(
                             userId,
-                            queryDto.getDate().with(TemporalAdjusters.firstDayOfMonth()),
-                            queryDto.getDate().with(TemporalAdjusters.firstDayOfNextMonth()))
+                            date.with(TemporalAdjusters.firstDayOfMonth()),
+                            date.with(TemporalAdjusters.firstDayOfNextMonth()))
                     .stream().map(RecordRequestDto::new).collect(Collectors.toCollection(ArrayList::new));
             return new RecordResponseDto(list, weekSum, monthSum);
 
@@ -66,9 +66,9 @@ public class RecordService {
         //해당 유저의 기간 및 카테고리 검색
         list = recordRepository.findAllByUserIdAndCategoryAndDateBetweenOrderByDateDesc(
                         userId,
-                        queryDto.getCategory(),
-                        queryDto.getDate().with(TemporalAdjusters.firstDayOfMonth()),
-                        queryDto.getDate().with(TemporalAdjusters.firstDayOfNextMonth()))
+                        category,
+                        date.with(TemporalAdjusters.firstDayOfMonth()),
+                        date.with(TemporalAdjusters.firstDayOfNextMonth()))
                 .stream().map(RecordRequestDto::new).collect(Collectors.toCollection(ArrayList::new));
 
         return new RecordResponseDto(list, weekSum, monthSum);

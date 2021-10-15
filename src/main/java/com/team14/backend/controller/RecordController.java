@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @RestController
@@ -30,10 +32,11 @@ public class RecordController {
 
     //가계부 Get 요청
     @GetMapping("/api/records")
-    public ResponseDto getRecords(@RequestBody RecordQueryDto queryDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseDto getRecords(@RequestParam("username") String username, @RequestParam("date") String date, @RequestParam("category") String category, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         checkLogin(userDetails);                                                        //로그인 상태 확인
         User user = userService.loadLoginUser(userDetails);                             //로그인 유저 정보 확인
-        RecordResponseDto responseDto = recordService.getAllRecords(queryDto, user);    //가계부 조회
+        LocalDate parseDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
+        RecordResponseDto responseDto = recordService.getAllRecords(username,parseDate,category, user);    //가계부 조회
         return new ResponseDto("success", "", responseDto);
     }
 
