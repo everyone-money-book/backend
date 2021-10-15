@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RecordService {
@@ -42,31 +44,37 @@ public class RecordService {
                     () -> new CustomErrorException("해당 유저 정보가 존재하지 않습니다.")
             ).getId();
         }
-        //pageable 옵션, page 는 -1 해주어야 한다. 가계부 날짜 역순으로 정렬
-        PageRequest pageRequest = PageRequest.of(
-                queryDto.getPage() - 1,
-                queryDto.getDisplay(),
-                Sort.by("date").descending()
-        );
-        Page<RecordRequestDto> page;
+//        //pageable 옵션, page 는 -1 해주어야 한다. 가계부 날짜 역순으로 정렬
+//        PageRequest pageRequest = PageRequest.of(
+//                queryDto.getPage() - 1,
+//                queryDto.getDisplay(),
+//                Sort.by("date").descending()
+//        );
+//        Page<RecordRequestDto> page;
+        List<RecordRequestDto> list;
         //마지막 7일간 소비지출 합
         Long weekSum = getWeekCost(userId, queryDto.getCategory());
         //해당 월 소비지출 합
         Long monthSum = getMonthCost(userId, queryDto.getCategory());
         //해당 유저의 기간 검색
         if (queryDto.getCategory().equals("all")) {
-            page = recordRepository.findAllByUserIdAndDateBefore(userId, queryDto.getDate(), pageRequest).map(RecordRequestDto::new);
-            return new RecordResponseDto(page, weekSum, monthSum);
+            list = recordRepository.findAllByUserIdAndDateBetween(
+                            userId,
+                            queryDto.getDate().with(TemporalAdjusters.firstDayOfMonth()),
+                            queryDto.getDate().with(TemporalAdjusters.firstDayOfNextMonth()))
+                    .stream().map(RecordRequestDto::new).collect(Collectors.toCollection(ArrayList::new));
+            return new RecordResponseDto(list, weekSum, monthSum);
 
         }
         //해당 유저의 기간 및 카테고리 검색
-        page = recordRepository.findAllByUserIdAndCategory(
+        list = recordRepository.findAllByUserIdAndCategoryAndDateBetween(
                         userId,
                         queryDto.getCategory(),
-                        pageRequest)
-                .map(RecordRequestDto::new);
+                        queryDto.getDate().with(TemporalAdjusters.firstDayOfMonth()),
+                        queryDto.getDate().with(TemporalAdjusters.firstDayOfNextMonth()))
+                .stream().map(RecordRequestDto::new).collect(Collectors.toCollection(ArrayList::new));
 
-        return new RecordResponseDto(page, weekSum, monthSum);
+        return new RecordResponseDto(list, weekSum, monthSum);
     }
 
     //가계부 저장

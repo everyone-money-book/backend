@@ -4,15 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class RecordResponseDto {
-    private Page<RecordRequestDto> records;
+    private List<RecordRequestDto> records;
     private Long weekCost;
     private Long totalCost;
 
-    public RecordResponseDto(Page<RecordRequestDto> page, Long weekSum, Long monthSum) {
-        this.records = page;
+    public RecordResponseDto(List<RecordRequestDto> list, Long weekSum, Long monthSum) {
+        this.records = list;
         this.weekCost = weekSum;
         this.totalCost = monthSum;
     }
