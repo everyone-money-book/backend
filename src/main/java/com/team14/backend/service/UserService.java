@@ -78,6 +78,19 @@ public class UserService {
         }
     }
     
+    //로그인
+    public User login(String username, String password) {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new CustomErrorException("유저네임을 찾을 수 없습니다.")
+        );
+
+        // 패스워드 암호화
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomErrorException("비밀번호가 맞지 않습니다.");
+        }
+        return user;
+    }
+
     //회원정보 업데이트
     @Transactional
     public ResponseDto updateUserInfo(UserUpdateReqeustDto userUpdateReqeustDto, UserDetailsImpl userDetails) {
