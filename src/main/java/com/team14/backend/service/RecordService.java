@@ -9,9 +9,6 @@ import com.team14.backend.model.User;
 import com.team14.backend.repository.RecordRepository;
 import com.team14.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,10 +34,10 @@ public class RecordService {
     public RecordResponseDto getAllRecords(RecordQueryDto queryDto, User user) {
         Long userId;
         //쿼리문에 userId 조건이 없을 경우 자신의 가계부 전체 조회
-        if (queryDto.getUserId().equals("")) {
+        if (queryDto.getUsername().equals("")) {
             userId = user.getId();
         } else {    //특정 user의 가계부 전체 조회
-            userId = userRepository.findByUsername(queryDto.getUserId()).orElseThrow(
+            userId = userRepository.findByUsername(queryDto.getUsername()).orElseThrow(
                     () -> new CustomErrorException("해당 유저 정보가 존재하지 않습니다.")
             ).getId();
         }

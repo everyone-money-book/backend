@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class RecordQueryDto {
-    private String userId;
+    private String username;
     private String category;
     private LocalDate date;
 }
