@@ -11,6 +11,6 @@ import java.util.List;
 public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findAllByUserIdAndDateBetween(Long userId, LocalDate start, LocalDate end);
     List<Record> findAllByUserIdAndCategoryAndDateBetween(Long userId, String category, LocalDate start, LocalDate end);
-    List<Record> findAllByUserIdAndDateBetweenOrderByDateDesc(Long userId, LocalDate start, LocalDate end);
-    List<Record> findAllByUserIdAndCategoryAndDateBetweenOrderByDateDesc(Long userId, String category, LocalDate start, LocalDate end);
+    List<Record> findAllByUserIdOrderByDateDesc(Long userId);
+    List<Record> findAllByUserIdAndCategoryOrderByDateDesc(Long userId, String category);
 }
