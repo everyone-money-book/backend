@@ -34,7 +34,8 @@
 
 - 데이터베이스 스키마
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d836b08f-5e41-4ac5-a5b7-17466769e2b0/Untitled.png)
+    ![Untitled](https://user-images.githubusercontent.com/78577071/137587169-654ffdc2-d28e-47f8-b615-3af086f1fbf8.png)
+
     
 - 엔티티 연관관계(JPA)
     
@@ -132,13 +133,16 @@
     
 - Api
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f8873e39-ed09-4052-a6bb-e043697d4ac6/Untitled.png)
+   ![Untitled01](https://user-images.githubusercontent.com/78577071/137587177-5746988e-a686-47c1-b462-333ae7366a57.png)
+
+    ![Untitled02](https://user-images.githubusercontent.com/78577071/137587179-57e35f67-c13a-43f3-a55b-411d2e5404ac.png)
+
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6b1cf942-fba0-4db8-8ba9-746b8fcda936/Untitled.png)
+![Untitled03](https://user-images.githubusercontent.com/78577071/137587183-6141f1a9-11ac-4965-a64d-3e8648175409.png)
+
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0aec41c9-f51c-4640-979b-cce4acd721ea/Untitled.png)
-    
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/25476ee5-6eeb-4eb1-adc8-721e02b78bf3/Untitled.png)
+![Untitled04](https://user-images.githubusercontent.com/78577071/137587189-797b9123-4648-423d-a521-0402f2b14add.png)
+
     
 
 ## 트러블 슈팅
