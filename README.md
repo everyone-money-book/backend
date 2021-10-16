@@ -356,4 +356,5 @@
         
     - 5.이제 모든 요청의 헤더는 token을 함께 보내고, JwtAuthenticationFilter가 입구에서 검사해서 인증정보를 SecurityContextHolder에 저장해준다.
         
-        ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bae48797-29eb-4c93-8deb-3cb15aff3145/Untitled.png)
+        
+![Untitled](https://user-images.githubusercontent.com/78577071/137587435-f97f7214-e168-43d0-a99c-11873a5c9bf8.png)
