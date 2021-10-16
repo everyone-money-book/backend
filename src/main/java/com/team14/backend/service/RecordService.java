@@ -55,20 +55,16 @@ public class RecordService {
         Long monthSum = getMonthCost(userId, category);
         //해당 유저의 기간 검색
         if (category.equals("all")) {
-            list = recordRepository.findAllByUserIdAndDateBetweenOrderByDateDesc(
-                            userId,
-                            date.with(TemporalAdjusters.firstDayOfMonth()),
-                            date.with(TemporalAdjusters.firstDayOfNextMonth()))
+            list = recordRepository.findAllByUserIdOrderByDateDesc(
+                            userId)
                     .stream().map(RecordRequestDto::new).collect(Collectors.toCollection(ArrayList::new));
             return new RecordResponseDto(list, weekSum, monthSum);
 
         }
         //해당 유저의 기간 및 카테고리 검색
-        list = recordRepository.findAllByUserIdAndCategoryAndDateBetweenOrderByDateDesc(
+        list = recordRepository.findAllByUserIdAndCategoryOrderByDateDesc(
                         userId,
-                        category,
-                        date.with(TemporalAdjusters.firstDayOfMonth()),
-                        date.with(TemporalAdjusters.firstDayOfNextMonth()))
+                        category)
                 .stream().map(RecordRequestDto::new).collect(Collectors.toCollection(ArrayList::new));
 
         return new RecordResponseDto(list, weekSum, monthSum);
@@ -134,7 +130,7 @@ public class RecordService {
             List<Record> monthData = recordRepository.findAllByUserIdAndDateBetween(
                     userId,
                     LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()),
-                    LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth())
+                    LocalDate.now().with(TemporalAdjusters.lastDayOfMonth())
             );
             //지출 합
             for (Record record : monthData) {
@@ -146,7 +142,7 @@ public class RecordService {
                     userId,
                     category,
                     LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()),
-                    LocalDate.now().with(TemporalAdjusters.firstDayOfNextMonth())
+                    LocalDate.now().with(TemporalAdjusters.lastDayOfMonth())
             );
             //지출 합
             for (Record record : monthData) {
